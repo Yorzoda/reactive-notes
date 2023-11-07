@@ -1,0 +1,10 @@
+.note-form {
+    display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.invalid {
+	border: 1px solid red;
+	background: rgb(214, 36, 36)a(255, 0, 0, 0.844);
+}

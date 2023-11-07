@@ -1,8 +1,8 @@
-import './Header.css';
+import style from  './Header.module.css';
 
 function Header() {
 	return (
-		<>Logo</>
+		<img className={ style.logo} src="/logo.svg" alt="Note-logo" />
 	);
 }
 
