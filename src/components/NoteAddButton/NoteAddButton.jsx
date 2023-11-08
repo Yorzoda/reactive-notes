@@ -3,7 +3,10 @@ import './NoteAddButton.css';
 
 function NoteAddButton() {
 	return (
-		<CardButton className ='note-add'>Add note</CardButton>
+		<CardButton className ='note-add'>
+			<img src="/add.svg" alt="add-note" className='note-add-btn' />
+			Add note
+		</CardButton>
 	);
 }
 

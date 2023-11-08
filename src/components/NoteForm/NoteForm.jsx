@@ -1,6 +1,7 @@
 import style from './NoteForm.module.css';
 import Button from '../Button/Button';
 import { useState } from 'react';
+import clN from 'classnames';
 
 
 function NoteForm({submitItem}) {
@@ -44,11 +45,19 @@ function NoteForm({submitItem}) {
 
 	return (
 		<form className={style['note-form']} onSubmit={submit}>
-			<input type="text" name='title' className={`${style['input']} ${validState.title ? '': style['invalid']}`}/>
-			<input type="date" name='date' className={`${style['input']} ${validState.date ? '': style['invalid']}`}/>
-			<textarea name="text" id="" cols="30" rows="10" className={`${style['input']} ${validState.text ? '': style['invalid']}`}></textarea>
+			<div className={style['form-row']}>
+				<input type="text" name='title' className={clN(style['input-title'], {[style['invalid']]:!validState.title})}/>
+			</div>
+			<div className={style['form-row']}>
+				<label htmlFor="date" className={style['form-label']}>
+					<img src="/calendar.svg" alt="calendar" />
+					<span>Дата</span>
+				</label>
+				<input type="date" name='date' id='date' className={clN(style['input'], {[style['invalid']]:!validState.date})}/>
+			</div>
+			<textarea name="text" id="" cols="30" rows="10" className={clN(style['input'], {[style['invalid']]:!validState.text})}></textarea>
 			<Button text="Save note" />
-		</form>
+		</form> 
 	);
 }
 
