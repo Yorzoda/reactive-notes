@@ -1,61 +1,58 @@
 import style from './NoteForm.module.css';
-import Button from '../Button/Button';
-import { useState } from 'react';
 import clN from 'classnames';
+import Button from '../Button/Button';
+import { useEffect, useReducer } from 'react';
+import { INITIAL_STATE, formReducer } from './NoteForm.state';
 
 
 function NoteForm({submitItem}) {
-	const[validState,setValidState] = useState({
-		title:true,
-		text:true,
-		date:true
-	});
-	let isFormValid = true;
+	const[formState,dispatchForm] = useReducer(formReducer,INITIAL_STATE);
+	const {isValid,isFormReady,values} = formState;
+
+	useEffect(()=>{
+		let timerID;
+		if(!isValid.date || !isValid.text || !isValid.title) {
+			timerID = setTimeout(() => {
+				dispatchForm({type:'RESET_VALIDITY'});
+			}, 2000);
+		}
+		return () => {
+			clearTimeout(timerID);
+		};
+	},[isValid]);
+
+	useEffect(()=> {
+		if(isFormReady) {
+			submitItem(values);
+			dispatchForm({type:'CLEAR'});
+		}
+	},[isFormReady]);
+
+	const onFormChange = (e) => {
+		dispatchForm({type:'SET_VALUE',payload:{[e.target.name]:[e.target.value]}});
+	};
+
+
 	const submit = (event) => {
 		event.preventDefault();
 		const formData = new FormData(event.target);
 		const formProps = Object.fromEntries(formData);
-		
-		if (!formProps.title?.trim().length) {
-			setValidState(state =>({...state,title:false}));
-			isFormValid = false;
-		} else {
-			setValidState(state =>({...state,title:true}));
-		}
-
-		if (!formProps.text?.trim().length) {
-			setValidState(state =>({...state,text:false}));
-			isFormValid = false;
-		} else {
-			setValidState(state =>({...state,text:true}));
-		}  
-
-		if (!formProps.date) {
-			setValidState(state =>({...state,date:false}));
-			isFormValid = false;
-		} else {
-			setValidState(state =>({...state,date:true}));
-		}
-
-		if (!isFormValid) {
-			return;
-		}		
-		submitItem(formProps);
+		dispatchForm({type:'SUBMIT',payload:formProps});
 	};
 
 	return (
 		<form className={style['note-form']} onSubmit={submit}>
 			<div className={style['form-row']}>
-				<input type="text" name='title' className={clN(style['input-title'], {[style['invalid']]:!validState.title})}/>
+				<input type="text" name='title' onChange={onFormChange} className={clN(style['input-title'], {[style['invalid']]:!isValid.title})}/>
 			</div>
 			<div className={style['form-row']}>
 				<label htmlFor="date" className={style['form-label']}>
 					<img src="/calendar.svg" alt="calendar" />
 					<span>Дата</span>
 				</label>
-				<input type="date" name='date' id='date' className={clN(style['input'], {[style['invalid']]:!validState.date})}/>
+				<input type="date" name='date' id='date'  onChange={onFormChange} className={clN(style['input'], {[style['invalid']]:!isValid.date})}/>
 			</div>
-			<textarea name="text" id="" cols="30" rows="10" className={clN(style['input'], {[style['invalid']]:!validState.text})}></textarea>
+			<textarea name="text" id="" cols="30" rows="10" onChange={onFormChange} className={clN(style['input'], {[style['invalid']]:!isValid.text})}></textarea>
 			<Button text="Save note" />
 		</form> 
 	);

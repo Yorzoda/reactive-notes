@@ -7,37 +7,34 @@ import Header from './components/Header/Header';
 import NoteAddButton from './components/NoteAddButton/NoteAddButton';
 import NoteList from './components/NoteList/NoteList';
 import NoteForm from './components/NoteForm/NoteForm';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
-	const staticData = [
-	// 	{
-	// 		id:1,
-	// 		title:'Lorem Ipsum',
-	// 		text:'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s,',
-	// 		date:new Date()
-	// 	},
-	// 	{
-	// 		id:2,
-	// 		title:'Li Europan lingues',
-	// 		text:'Li Europan lingues es membres del sam familie. Lor separat existentie es un myth',
-	// 		date:new Date()
-	// 	},
-	// 	{
-	// 		id:3,
-	// 		title:'Far far away',
-	// 		text:'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia',
-	// 		date:new Date()
-	// 	}
-	];
 
-	const [itemData,setItemData] = useState(staticData);	
- 
+	const [itemData,setItemData] = useState([]);	
+	
+	useEffect(()=>{
+		const data = JSON.parse(localStorage.getItem('data'));
+		if (data) {
+			setItemData(data.map(item => ({
+				...item,
+				date:new Date(item.date)
+			})));
+		}
+	},[]);
+
+	useEffect(()=>{
+		if (itemData.length) {
+			console.log('Write');
+			localStorage.setItem('data',JSON.stringify(itemData));
+		}
+	},[itemData]);
+	
 	const addItemData = item => {
 		setItemData(oldItemData => [...oldItemData,{
 			...item,
 			id:oldItemData.length > 0 ? Math.max(...oldItemData.map(i =>i.id)) + 1: 1,
-			date: item.date? new Date(item.date) : Date.now()
+			date:new Date(item.date) 
 		}]);
 	};
 
