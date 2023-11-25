@@ -13,8 +13,9 @@ function NoteForm({submitItem}) {
 		let timerID;
 		if(!isValid.date || !isValid.text || !isValid.title) {
 			timerID = setTimeout(() => {
+				console.log('очистка полей');
 				dispatchForm({type:'RESET_VALIDITY'});
-			}, 2000);
+			}, 6000);
 		}
 		return () => {
 			clearTimeout(timerID);
@@ -26,7 +27,7 @@ function NoteForm({submitItem}) {
 			submitItem(values);
 			dispatchForm({type:'CLEAR'});
 		}
-	},[isFormReady]);
+	},[isFormReady,submitItem,values]);
 
 	const onFormChange = (e) => {
 		dispatchForm({type:'SET_VALUE',payload:{[e.target.name]:[e.target.value]}});
@@ -35,24 +36,22 @@ function NoteForm({submitItem}) {
 
 	const submit = (event) => {
 		event.preventDefault();
-		const formData = new FormData(event.target);
-		const formProps = Object.fromEntries(formData);
-		dispatchForm({type:'SUBMIT',payload:formProps});
+		dispatchForm({type:'SUBMIT'});
 	};
 
 	return (
 		<form className={style['note-form']} onSubmit={submit}>
 			<div className={style['form-row']}>
-				<input type="text" name='title' onChange={onFormChange} className={clN(style['input-title'], {[style['invalid']]:!isValid.title})}/>
+				<input type="text" name='title' onChange={onFormChange} value={values.title} className={clN(style['input-title'], {[style['invalid']]:!isValid.title})}/>
 			</div>
 			<div className={style['form-row']}>
 				<label htmlFor="date" className={style['form-label']}>
 					<img src="/calendar.svg" alt="calendar" />
 					<span>Дата</span>
 				</label>
-				<input type="date" name='date' id='date'  onChange={onFormChange} className={clN(style['input'], {[style['invalid']]:!isValid.date})}/>
+				<input type="date" name='date' id='date'  onChange={onFormChange} value={values.date ? new Date(values.date).toISOString().slice(0, 10) : ''} className={clN(style['input'], {[style['invalid']]:!isValid.date})}/>
 			</div>
-			<textarea name="text" id="" cols="30" rows="10" onChange={onFormChange} className={clN(style['input'], {[style['invalid']]:!isValid.text})}></textarea>
+			<textarea name="text" id="" cols="30" rows="10" onChange={onFormChange} value={values.text} className={clN(style['input'], {[style['invalid']]:!isValid.text})}></textarea>
 			<Button text="Save note" />
 		</form> 
 	);

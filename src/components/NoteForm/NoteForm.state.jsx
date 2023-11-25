@@ -17,11 +17,12 @@ export function formReducer(state,action){
 	case 'RESET_VALIDITY':
 		return {...state,isValid:INITIAL_STATE.isValid};
 	case 'SUBMIT':{
-		const titleValidation = action.payload.title?.trim().length;
-		const textValidation = action.payload.text?.trim().length;
-		const dateValidation = action.payload.date;
+		console.log(typeof(state.values.text));
+		const titleValidation = state.values.title.length;
+		const textValidation = state.values.text?.trim().length;
+		const dateValidation = state.values.date;
 		return {
-			values:action.payload,
+			...state,
 			isValid:{
 				title:titleValidation,
 				text:textValidation,
@@ -30,11 +31,11 @@ export function formReducer(state,action){
 			isFormReady: titleValidation && textValidation && dateValidation
 		};
 	}
-	case 'CLEAR':{
-		return{...state,payload:INITIAL_STATE.values};
+	case 'CLEAR':{ 
+		return{...state,values:INITIAL_STATE.values,isValid:false};
 	}
 	case 'SET_VALUE':{
-		return{...state,values:{...state.payload,...action.payload}};
+		return{...state,values:{...state.values,...action.payload}};
 	}
 	}
 }

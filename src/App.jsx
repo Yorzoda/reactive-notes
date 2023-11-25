@@ -1,5 +1,5 @@
 import './App.css';
-import JouranlItem from './components/NoteItem/NoteItem';
+import NoteItem from './components/NoteItem/NoteItem';
 import CardButton from './components/CardButton/CardButton';
 import LeftPanel from './layouts/LeftPanel/LeftPanel';
 import Body from './layouts/Body/Body';
@@ -25,14 +25,15 @@ function App() {
 
 	useEffect(()=>{
 		if (itemData.length) {
-			console.log('Write');
+			console.log('writed');
 			localStorage.setItem('data',JSON.stringify(itemData));
 		}
 	},[itemData]);
 	
 	const addItemData = item => {
 		setItemData(oldItemData => [...oldItemData,{
-			...item,
+			title:item.title,
+			text:item.text,
 			id:oldItemData.length > 0 ? Math.max(...oldItemData.map(i =>i.id)) + 1: 1,
 			date:new Date(item.date) 
 		}]);
@@ -54,11 +55,13 @@ function App() {
 				<NoteList>
 					{itemData.length === 0 && <p>No any notes here</p>}
 					{itemData.length > 0 && itemData.sort(sortItems).map(element => (
+	
 						<CardButton key={element.id}>
-							<JouranlItem 
+							<NoteItem 
 								title={element.title} 
+								date={element.date}
 								text={element.text} 
-								date={element.date}/>
+							/>
 						</CardButton>
 					))}
 				</NoteList>
